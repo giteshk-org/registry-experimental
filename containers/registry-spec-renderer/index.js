@@ -5,8 +5,8 @@ const {RegistryClient} = require("@giteshk-org/apigeeregistry");
 const grpc = require("@grpc/grpc-js");
 
 var client_options = {};
-if (process.env.APG_REGISTRY_INSECURE && process.env.APG_REGISTRY_INSECURE
-    == "1") {
+if (process.env.APG_REGISTRY_INSECURE
+    && process.env.APG_REGISTRY_INSECURE == "1") {
   client_options.sslCreds = grpc.credentials.createInsecure();
 }
 
@@ -43,13 +43,13 @@ app.use('/renderer/graphql', express.static('node_modules/react'))
 app.use('/renderer/graphql', express.static('node_modules/react-dom'))
 app.use('/renderer/graphql', express.static('node_modules/graphiql'))
 
-function renderTemplate(res, apiFormat) {
+function renderTemplate(res, apiFormat, spec_name) {
   var renderer_template = "";
   switch (apiFormat) {
     case "openapi":
       renderer_template = swagger_ui_template.toString();
       break;
-    case "async":
+    case "asyncapi":
       renderer_template = async_template.toString();
       break;
     case "graphql":
@@ -99,6 +99,7 @@ app.get(
         name: spec_name
       }, (err, response) => {
         if (err) {
+          console.error(err);
           res.sendStatus(500);
           res.end();
         } else {
@@ -108,6 +109,7 @@ app.get(
               name: api_name
             }, (err, response2) => {
               if (err) {
+                console.error(err);
                 res.sendStatus(500);
                 res.end();
               } else {
@@ -116,11 +118,11 @@ app.get(
                   apiFormat = discoverAPIFormat(
                       response2.labels['apihub-style']);
                 }
-                renderTemplate(res, apiFormat);
+                renderTemplate(res, apiFormat, spec_name);
               }
             });
           } else {
-            renderTemplate(res, apiFormat);
+            renderTemplate(res, apiFormat, spec_name);
           }
         }
       })
@@ -163,7 +165,9 @@ app.get('/healthz', (req, res) => {
   res.end();
 });
 
-app.listen(process.env.PORT || 80, function(err){
-  if (err) console.log("Error in server setup")
+app.listen(process.env.PORT || 80, function (err) {
+  if (err) {
+    console.log("Error in server setup")
+  }
   console.log("Server listening on Port", process.env.PORT || 80);
 });
