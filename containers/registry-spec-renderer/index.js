@@ -162,4 +162,8 @@ app.get('/healthz', (req, res) => {
   res.sendStatus(200);
   res.end();
 });
-app.listen(process.env.PORT || 3000);
+
+app.listen(process.env.PORT || 80, function(err){
+  if (err) console.log("Error in server setup")
+  console.log("Server listening on Port", process.env.PORT || 80);
+});
