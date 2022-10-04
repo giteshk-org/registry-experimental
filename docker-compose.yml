@@ -84,7 +84,18 @@ services:
     depends_on:
     - registry-server
   registry-tools:
-    image: ghcr.io/apigee/registry-tools:main
+    image: ghcr.io/giteshk-org/registry-tools:main
+    command: >
+      bash -c "registry rpc admin create-project --project_id=example --project.name=example --registry.server=$APG_REGISTRY_ADDRESS --registry.insecure=$APG_REGISTRY_INSECURE
+      registry config configuration create default  --registry.server=$APG_REGISTRY_ADDRESS --registry.insecure=$APG_REGISTRY_INSECURE --registry.project=example --registry.location=global
+      wget https://gist.githubusercontent.com/giteshk/b9e1b61e739f6be09ffb40607f84d577/raw/8053315a4542a8821465b0c2c49d5fad394d7b17/petstore-example.yaml
+      registry apply -f petstore-example.yaml --parent=projects/example/locations/global
+      "
+    environment:
+    - APG_REGISTRY_ADDRESS=registry-server:8080
+    - APG_REGISTRY_INSECURE=1
+  registry-linters:
+    image: ghcr.io/giteshk-org/registry-linters:main
     environment:
     - APG_REGISTRY_ADDRESS=registry-server:8080
     - APG_ADMIN_ADDRESS=registry-server:8080
