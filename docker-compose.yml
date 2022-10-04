@@ -58,6 +58,11 @@ services:
     - registry-server
     depends_on:
     - registry-server
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9901/ready"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
   registry-app:
     image: ghcr.io/apigee/registry-viewer:main
     environment:
@@ -84,12 +89,31 @@ services:
     depends_on:
     - registry-server
   registry-tools:
-    image: ghcr.io/apigee/registry-tools:main
+    image: ghcr.io/giteshk-org/registry-tools:main
+    command: >
+      bash -c "
+      APG_REGISTRY_ADDRESS=registry-server:8080
+      APG_REGISTRY_INSECURE=1
+      registry rpc admin create-project --project_id=example --project.name=example --registry.address=${APG_REGISTRY_ADDRESS} --registry.insecure=${APG_REGISTRY_INSECURE}
+      registry config configurations create default  --registry.address=$APG_REGISTRY_ADDRESS --registry.insecure=$APG_REGISTRY_INSECURE --registry.project=example --registry.location=global
+      wget https://gist.githubusercontent.com/giteshk/b9e1b61e739f6be09ffb40607f84d577/raw/8053315a4542a8821465b0c2c49d5fad394d7b17/petstore-example.yaml
+      registry apply -f petstore-example.yaml --parent=projects/example/locations/global
+      wget https://raw.githubusercontent.com/apigee/registry-experimental/main/samples/apihub-experience/apihub-styleguide.yaml
+      registry apply -f apihub-styleguide.yaml --parent="projects/example/locations/global"
+      "
+    depends_on:
+    - envoy-registry
+  registry-linters:
+    image: ghcr.io/giteshk-org/registry-linters:main
+    command: >
+      bash -c "
+      registry compute conformance projects/example/locations/global/apis/petstore-example/versions/v1/specs/petstore.json  --registry.address=$APG_REGISTRY_ADDRESS --registry.insecure=$APG_REGISTRY_INSECURE
+      "
     environment:
     - APG_REGISTRY_ADDRESS=registry-server:8080
-    - APG_ADMIN_ADDRESS=registry-server:8080
     - APG_REGISTRY_INSECURE=1
-    - APG_ADMIN_INSECURE=1
+    depends_on:
+    - registry-tools
   registry-mock-service:
     image: ghcr.io/apigee/registry-prism-mock-server:main
     ports:

@@ -18,7 +18,7 @@
 # Make sure REGISTRY_PROJECT_IDENTIFIER is set
 
 # Build stage
-ARG REGISTRY_TOOL_IMAGE="ghcr.io/apigee/registry-tools:latest"
+ARG REGISTRY_TOOL_IMAGE="ghcr.io/giteshk-org/registry-tools:latest"
 
 FROM golang:alpine as builder
 
@@ -41,7 +41,7 @@ ARG REGISTRY_TOOL_IMAGE
 
 # Install spectral linter
 RUN apk add --no-cache nodejs npm
-RUN npm install -g @stoplight/spectral-cli@6.4.1
+RUN npm install -g @stoplight/spectral-cli
 
 # Copy other linter binaries
 COPY --from=builder /go/bin/api-linter /bin/
