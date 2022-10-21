@@ -15,12 +15,7 @@
 FROM pseudomuto/protoc-gen-doc:1.5 as protoc-gen-doc
 
 FROM ghcr.io/apigee/registry-tools:latest
-
-COPY --from=protoc-gen-doc /go/bin/protoc-gen-doc /bin/
-
-ARG PROTOC_VERSION=21.8
-RUN wget -q -O protoc.zip "https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOC_VERSION}/protoc-${PROTOC_VERSION}-linux-x86_64.zip" && \
-    unzip -o protoc.zip bin/protoc -d /
+COPY --from=protoc-gen-doc /usr/bin/protoc* /bin/
 
 VOLUME /workspace
 
