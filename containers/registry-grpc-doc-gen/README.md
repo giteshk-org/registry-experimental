@@ -6,6 +6,7 @@ the generated markup to an artifact `grpc-documentation` on the spec object.
 
 1. We have to generate a manifest for this controller
 ```
+
 PROJECT_ID=<GCP_PROJECT_NAME>
 registry upload manifest ./registry-grpc-doc-gen-manifest.yaml --project-id=${PROJECT_ID}
 ```
@@ -38,3 +39,4 @@ registry upload manifest ./registry-grpc-doc-gen-manifest.yaml --project-id=${PR
           --namespace registry-custom \
          iam.gke.io/gcp-service-account=registry-admin-gsa@${PROJECT_ID}.iam.gserviceaccount.com
       ```
+

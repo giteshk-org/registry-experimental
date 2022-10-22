@@ -14,11 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 set -euox pipefail
+
 
 args=("$@")
 
 mkdir -p /workspace/args[0]/protos
+
 
 TOKEN=$(curl -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token | jq .access_token -r)
 SPEC_DETAILS=$(registry get args[0] --token=$TOKEN --registry.address=${REGISTRY_ADDRESS})
@@ -41,3 +44,4 @@ registry rpc create-artifact grpc-documentation \
   --artifact.mime_type="text/html" \
   --artifact_id=grpc-documentation \
   --parent=args[0]
+
