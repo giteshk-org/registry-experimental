@@ -49,6 +49,8 @@ registry rpc create-artifact grpc-documentation \
   --artifact.mime_type "text/plain" \
   --artifact_id grpc-documentation \
   --parent $SPEC \
+  --registry.address=${REGISTRY_ADDRESS} \
+  --registry.token=$TOKEN \
   --artifact.contents "$DOC_HEX_STRING"
 
 
