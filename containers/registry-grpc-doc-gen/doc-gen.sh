@@ -43,7 +43,7 @@ protoc @"$SPEC_PATH/proto-files.txt" \
   --proto_path="/googleapis-common-protos" \
   --doc_out="$SPEC_PATH" --doc_opt=html,index.html
 
-DOC_HEX_STRING=$(cat "$SPEC_PATH/index.html" | xxd -ps -c 200 | tr -d '\n')
+DOC_HEX_STRING=$(cat "$SPEC_PATH/index.html" | xxd -p | tr -d '\n')
 
 registry rpc create-artifact grpc-documentation \
   --artifact.mime_type "text/plain" \
