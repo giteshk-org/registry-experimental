@@ -12,18 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM golang:1.18 as protoc-gen-doc
-RUN go install github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc@latest
+FROM  pseudomuto/protoc-gen-doc:1.5 as protoc-gen-doc
 
 FROM ghcr.io/apigee/registry-tools:latest
-RUN apk update && apk add --no-cache protobuf
-COPY --from=protoc-gen-doc /go/bin/protoc-gen-doc /bin/
-
-#Download the well known types for Protocol buffers
-RUN PB_VERSION="21.8" && PB_REL="https://github.com/protocolbuffers/protobuf/releases" && \
-    curl -LO ${PB_REL}/download/v${PB_VERSION}/protoc-${PB_VERSION}-linux-x86_64.zip && \
-    mkdir /protoc && \
-    unzip protoc-${PB_VERSION}-linux-x86_64.zip -d /protoc
+RUN apk update && apk add --no-cache protobuf && mkdir -p /protoc/include/
+COPY --from=protoc-gen-doc /usr/bin/protoc-gen-doc /bin/
+COPY --from=protoc-gen-doc /usr/include/google /protoc/include/google/
+RUN find /protoc/include/ -type f ! -iname "*.proto" -delete
 
 COPY ./doc-gen.sh /
 RUN chmod +x /doc-gen.sh
