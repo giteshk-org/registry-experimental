@@ -1,4 +1,4 @@
-# Copyright 2021 Google LLC
+# Copyright 2022 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,5 +16,5 @@ generated_resources:
 - pattern: apis/-/versions/-/specs/-/artifacts/grpc-documentation
   dependencies:
   - pattern: $resource.spec
-    filter: "mime_type.contains('grpc')"
+    filter: "mime_type.contains('protobuf')"
   action: "/doc-gen.sh $resource.spec"
