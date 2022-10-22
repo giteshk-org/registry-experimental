@@ -33,6 +33,8 @@ registry get $SPEC  --contents --registry.token=$TOKEN --registry.address=${REGI
 
 if [ $MIMETYPE == "application/x.protobuf+gzip" ]; then
   tar -xf "$SPEC_PATH/$FILENAME" -C "$SPEC_PATH/protos"
+  else
+    mv "$SPEC_PATH/*.proto" "$SPEC_PATH/protos"
 fi
 
 find "$SPEC_PATH/protos" -type f -name "*.proto"  > "$SPEC_PATH/proto-files.txt"
