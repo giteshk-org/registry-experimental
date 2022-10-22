@@ -19,6 +19,12 @@ FROM ghcr.io/apigee/registry-tools:latest
 RUN apk update && apk add --no-cache protobuf
 COPY --from=protoc-gen-doc /go/bin/protoc-gen-doc /bin/
 
+#Download the well known types for Protocol buffers
+RUN PB_VERSION="21.8" && PB_REL="https://github.com/protocolbuffers/protobuf/releases" && \
+    curl -LO ${PB_REL}/download/v${PB_VERSION}/protoc-${PB_VERSION}-linux-x86_64.zip && \
+    mkdir /protoc && \
+    unzip protoc-${PB_VERSION}-linux-x86_64.zip -d /protoc
+
 COPY ./doc-gen.sh /
 RUN chmod +x /doc-gen.sh
 
