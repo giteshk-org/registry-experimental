@@ -23,7 +23,7 @@ SPEC_PATH="/tmp/workspace/$SPEC"
 
 rm -rf "$SPEC_PATH"
 
-mkdir -p "$SPEC_PATH/protos"
+mkdir -p "$SPEC_PATH"
 
 SPEC_DETAILS=$(registry get  $SPEC --registry.token=$TOKEN --registry.address=${REGISTRY_ADDRESS})
 MIMETYPE=$( echo $SPEC_DETAILS | jq -r .mimeType)
@@ -32,15 +32,13 @@ FILENAME=$( echo $SPEC_DETAILS | jq -r .filename)
 registry get $SPEC  --contents --registry.token=$TOKEN --registry.address=${REGISTRY_ADDRESS} > "$SPEC_PATH/$FILENAME"
 
 if [ $MIMETYPE == "application/x.protobuf+gzip" ]; then
-  tar -xf "$SPEC_PATH/$FILENAME" -C "$SPEC_PATH/protos"
-  else
-    mv "$SPEC_PATH/*.proto" "$SPEC_PATH/protos"
+  tar -xf "$SPEC_PATH/$FILENAME" -C "$SPEC_PATH"
 fi
 
-find "$SPEC_PATH/protos" -type f -name "*.proto"  > "$SPEC_PATH/proto-files.txt"
+find "$SPEC_PATH" -type f -name "*.proto"  > "$SPEC_PATH/proto-files.txt"
 
 protoc @"$SPEC_PATH/proto-files.txt" \
-  --proto_path="$SPEC_PATH/protos" \
+  --proto_path="$SPEC_PATH" \
   --proto_path="/protoc/include" \
   --proto_path="/googleapis-common-protos" \
   --doc_out="$SPEC_PATH" --doc_opt=html,index.html
